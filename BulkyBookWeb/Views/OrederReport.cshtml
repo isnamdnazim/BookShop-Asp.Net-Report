@@ -1,0 +1,363 @@
+﻿@using System.IO;
+@using System.Linq;
+@using System.Globalization;
+@model BulkyBook.Models.ViewModels.OrderReportVM
+@*IEnumerable<PayrollManagement.Application.ReportPrint.Model.ReportBenefitBillClaimPdfVM>*@
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PR Report</title>
+    <style type="text/css">
+        body {
+            font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+        }
+
+
+        .header {
+            text-align: center;
+            color: green;
+            padding-bottom: 35px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: auto;
+        }
+
+        td, th {
+            /* border: 1px solid gray;*/
+            padding: 2px 5px 2px 5px !important;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        th {
+            border: 1px solid gray;
+        }
+
+        table th {
+        @* background-color: whitesmoke;*@ color: black;
+            padding: 7px 5px 7px 5px !important
+        }
+
+        .bg-smoke {
+            background-color: whitesmoke;
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: always
+        }
+
+        table.report-container {
+            page-break-after: always;
+        }
+
+        thead.report-header {
+            display: table-header-group;
+        }
+
+        table.report-container div.article {
+            page-break-inside: avoid;
+        }
+
+        fieldset {
+        }
+
+        legend {
+            color: black;
+            padding: 5px 10px;
+        }
+
+        .row {
+            margin-left: -5px;
+            margin-right: -5px;
+        }
+
+        .column {
+            float: left;
+            width: 30%;
+            padding: 5px;
+        }
+        /* Clearfix (clear floats) */
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 16px;
+        }
+
+        .font-normal {
+            font-weight: 400 !important;
+        }
+
+        .font-bold {
+            font-weight: 700 !important;
+        }
+
+        .employee {
+            margin-top: 40px !important;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        .header {
+            text-align: center;
+            color: green;
+            padding-bottom: 35px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: auto;
+        }
+
+        td, th {
+            border: 1px solid gray;
+            padding: 3px 5px 3px 5px !important;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        th {
+            border: 1px solid gray;
+        }
+
+        table th {
+            background-color: whitesmoke;
+            color: black;
+            padding: 7px 5px 7px 5px !important
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: always
+        }
+
+        table.report-container {
+            page-break-after: always;
+        }
+
+        thead.report-header {
+            display: table-header-group;
+        }
+
+        tfoot.report-footer {
+            display: table-footer-group;
+        }
+
+        table.report-container div.article {
+            page-break-inside: avoid;
+        }
+
+        fieldset {
+        }
+
+        legend {
+            color: black;
+            padding: 5px 10px;
+            border: none;
+        }
+
+        hr {
+            display: block;
+            height: 1px;
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin: 1em 0;
+            padding: 0;
+        }
+
+        fieldset.scheduler-border {
+            border: 1px groove #ddd !important;
+            padding: 0 1.4em 1.4em 1.4em !important;
+            margin: 0 0 1.0em 0 !important;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+        legend.scheduler-border {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width: auto;
+            padding: 0 10px;
+            border-bottom: none;
+        }
+
+        .amount {
+            text-align: right !important;
+        }
+
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+
+        #pageCounter span {
+            counter-increment: pageTotal;
+        }
+
+        #box {
+            border-radius: 15px;
+            background: #f4f4f4;
+            border: 3px solid #bbbbbb;
+            margin: 0 !important;
+            width: 90%;
+            height: 100%;
+            margin: 10px auto;
+            position: relative;
+        }
+        /* Add your styling here */
+        .order-header {
+            /* Style for OrderHeader container */
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            /* Style for each OrderHeader item */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-details-table {
+            /* Style for OrderDetails table */
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+            .order-details-table th, .order-details-table td {
+                /* Style for table headers and cells */
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+        .order-item {
+            /* Style for each OrderHeader item */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-details-table {
+            /* Style for OrderDetails table */
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+            .order-details-table th, .order-details-table td {
+                /* Style for table headers and cells */
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+        .order-spacing {
+            /* Space between OrderHeader items and OrderDetails tables */
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    @{
+        <div class="order-header">
+
+           <div class="text-center" style="text-align:center;"><h4 class="text-center">Order Report   From : @Model.From.ToShortDateString() To: @Model.To.ToShortDateString()</h4></div>
+            @foreach (var orderVM in Model.OrderHeaders)
+            {
+                <div class="order-item">
+                    <p style="display:inline-block">Order ID: @orderVM.Id, </p>
+                    <p style="display:inline-block">Name: @orderVM.Name, </p>
+                    <p style="display:inline-block">Phone: @orderVM.PhoneNumber, </p>
+                   
+                    <p style="display:inline-block">Total: @orderVM.OrderTotal, </p>
+                    <p style="display:inline-block">Order Date: @orderVM.OrderDate.ToShortDateString(), </p>
+                    <p style="display:inline-block">Payment Status: @orderVM.PaymentStatus, </p>
+                    <p style="display:inline-block">Payment Date: @orderVM.PaymentDate.ToShortDateString()</p>
+                    <!-- Display other OrderHeader properties -->
+                </div>
+
+                <!-- OrderDetails Table -->
+                <table class="order-details-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Authos</th>
+                            <th>ISBN</th>
+                            <th>Qty</th>
+                          
+                            <!-- Add other OrderDetail properties as needed -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var orderDetail in orderVM.OrderDetails)
+                        {
+                            <tr>
+                                <td>@Html.Raw(orderDetail.Product.Description)</td>
+                                <td>@orderDetail.Price</td>
+                                <td>@orderDetail.Product.Author</td>
+
+                                <td>@orderDetail.Product.ISBN</td>
+                                <td>@orderDetail.Count</td>
+                              
+                                <!-- Display other OrderDetail properties -->
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Add space between OrderHeader items and OrderDetails tables -->
+                <div class="order-spacing"></div>
+            }
+        </div>
+    }
+
+</body>

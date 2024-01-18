@@ -1,0 +1,124 @@
+﻿@{
+    var title = "Sales Report";
+}
+
+<div class="container mt-5">
+    <div class="card text-center mx-auto" style="max-width: 400px;">
+        <div class="card-header">
+            <h2 class="card-title">@title</h2>
+        </div>
+        <div class="card-body">
+            <form id="reportForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="fromDate">From Date:</label>
+                        <input type="date" id="fromDate" name="fromDate" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="toDate">To Date:</label>
+                        <input type="date" id="toDate" name="toDate" class="form-control">
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary" onclick="downloadSalesReport()">Download</button>
+                    </div>
+                </div>
+
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary" onclick="downloadOrderReport()">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary" onclick="loadDataTable()">Show </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<table id="tblData"  class="table table-bordered table-striped" style="width:100%;visibility:hidden;">
+    <thead>
+        <tr>
+            <th>Id</th>
+             <th>Name</th>
+            <th>Phone</th>
+          
+            <th>Order Date</th>
+            <th>Order Total</th>
+            <th>Payment Status</th>
+            <th>Payment Date</th> 
+          
+        </tr>
+    </thead>
+</table>
+
+<script>
+    function downloadSalesReport() {
+        var fromDate = document.getElementById("fromDate").value;
+        var toDate = document.getElementById("toDate").value;
+      //  $('#tblData').d
+        window.location.href = '@Url.Action("DownloadReport", "Product")?fromDate=' + fromDate + '&toDate=' + toDate;
+    }
+
+    function downloadOrderReport() {
+        var fromDate = document.getElementById("fromDate").value;
+        var toDate = document.getElementById("toDate").value;
+
+        window.location.href = '@Url.Action("GenerateReport", "Order")?fromDate=' + fromDate + '&toDate=' + toDate;
+    }
+
+    function loadDataTable() {
+
+        var table = document.getElementById("tblData");
+        table.style.visibility = "visible";
+
+        var fromDate = document.getElementById("fromDate").value;
+        var toDate = document.getElementById("toDate").value;
+
+        if ($.fn.DataTable.isDataTable('#tblData')) {
+            $('#tblData').DataTable().destroy();
+        }
+        dataTable = $('#tblData').DataTable({
+            "ajax": {
+                "url": "/Admin/Order/GetOrderData",
+                "data": {
+                    "fromDate": fromDate,
+                    "toDate": toDate
+                }
+            },
+            "columns": [
+                { "data": "id", "width": "15%" },
+                { "data": "name", "width": "15%" },
+                { "data": "phoneNumber", "width": "15%" },
+                {
+                    "data": "orderDate",
+                    "width": "15%",
+                    "render": function (data) {
+                        // Assuming 'data' is in ISO format (yyyy-mm-dd)
+                        var date = new Date(data);
+                        return date.toLocaleDateString('en-GB');
+                    }
+                },
+                { "data": "orderTotal", "width": "15%" },
+               
+                { "data": "paymentStatus", "width": "15%" },
+                {
+                    "data": "paymentDate",
+                    "width": "15%",
+                    "render": function (data) {
+                        // Assuming 'data' is in ISO format (yyyy-mm-dd)
+                        var date = new Date(data);
+                        return date.toLocaleDateString('en-GB');
+                    }
+                }
+            ]
+        });
+
+    }
+</script>
